@@ -22,8 +22,9 @@ logger = logging.getLogger(__name__)
 from torch.utils.tensorboard import SummaryWriter
 writer = SummaryWriter(args.log_path+'/loss')
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-model = Transformer(args)
+model = Transformer(args).to(device)
 
 
 def predict(x):
@@ -61,6 +62,7 @@ def train():
     loss_log_no = 1
     for epoch in range(args.epochs):
         for i, (x, y) in enumerate(loader):
+            x, y = x.to(device), y.to(device)
             # [8, 50]
             pred = model(x, y[:, :-1]) # [8, 50, 14]
             pred = pred.reshape(-1, args.word_dict_length) # [400, 14]
@@ -101,9 +103,11 @@ def test(mode='test'):
             x = x[:50]
             x = torch.LongTensor([zidian_x[i] for i in x])
             logger.info('input: ' + ''.join([zidian_xr[i] for i in list(x)]))
+            x = x.to(device)
             logger.info('output: ' + ''.join([zidian_xr[i] for i in list(predict(x.unsqueeze(0))[0])]))
     else:
         for i, (x, y) in enumerate(loader):
+            x, y = x.to(device), y.to(device)
             break
 
         for i in range(x.shape[0]):
