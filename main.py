@@ -89,6 +89,9 @@ def train():
 
         sched.step()
     logger.info('End Training')
+    torch.save(model.state_dict(), 'model_state_dict.pth')
+    # model.load_state_dict(torch.load('model_state_dict.pth'))
+
 
 def test(mode='test'):
     # mode: test/user
@@ -114,7 +117,6 @@ def test(mode='test'):
             logger.info('input: ' + ''.join([zidian_xr[i] for i in x[i].tolist()]))
             logger.info('gt: ' + ''.join([zidian_xr[i] for i in y[i].tolist()]))
             logger.info('output: ' + ''.join([zidian_xr[i] for i in list(predict(x[i].unsqueeze(0))[0])]))
-            exit()
 
 
 if __name__ == "__main__":
