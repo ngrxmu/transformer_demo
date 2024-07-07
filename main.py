@@ -29,12 +29,13 @@ model = Transformer(args).to(device)
 
 def predict(x):
     # [1, 50]
+    device = x.device
     model.eval()
 
     mask_pad_x = mask_pad(x) # [1, 1, 50, 50]
 
     target = [zidian_x['<SOS>']] + [zidian_x['<PAD>']] * (args.max_length - 1)
-    target = torch.LongTensor(target).unsqueeze(0) # [1, 50]
+    target = torch.LongTensor(target).unsqueeze(0).to(device) # [1, 50]
 
     x = model.embed_x(x) # [1, 50, 32]
     x = model.encoder(x, mask_pad_x) # [1, 50, 32]
