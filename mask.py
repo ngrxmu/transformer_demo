@@ -14,8 +14,9 @@ def mask_pad(data):
 
 def mask_tril(data):
     # [b, 50]
+    device = data.device
     length = data.shape[1]
-    tril = 1 - torch.tril(torch.ones(1, length, length, dtype=torch.long)) # [1, 50, 50]
+    tril = (1 - torch.tril(torch.ones(1, length, length, dtype=torch.long))).to(device) # [1, 50, 50]
     mask = data == zidian_x['<PAD>'] # [b, 50]
     mask = mask.unsqueeze(1).long() # [b, 1, 50]
 
